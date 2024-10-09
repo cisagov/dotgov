@@ -482,12 +482,13 @@ class JsonServerFormatter(ServerFormatter):
         return json.dumps(log_entry)
 
 
-# default to json formatted logs
-server_formatter, console_formatter = "json.server", "json"
+# default to regular formatted logs
+server_handlers, console_handlers = ["django.server"], ["console"]
 
-# don't use json format locally, it makes logs hard to read in console
-if "localhost" in env_base_url:
-    server_formatter, console_formatter = "django.server", "verbose"
+# if not running locally, include json handlers for error logs
+if "localhost" not in env_base_url:
+    server_handlers.append("json.server")
+    console_handlers.append("json")
 
 LOGGING = {
     "version": 1,
@@ -521,13 +522,24 @@ LOGGING = {
         "console": {
             "level": env_log_level,
             "class": "logging.StreamHandler",
-            "formatter": console_formatter,
+            "formatter": "verbose",
         },
         "django.server": {
             "level": "INFO",
             "class": "logging.StreamHandler",
-            "formatter": server_formatter,
+            "formatter": "django.server",
         },
+        "json":{
+            "level": "ERROR",
+            "class": "logging.StreamHandler",
+            "formatter": "json",
+        },
+        "json.server": {
+            "level": "ERROR",
+            "class": "logging.StreamHandler",
+            "formatter": "json.server",
+        }
+        
         # No file logger is configured,
         # because containerized apps
         # do not log to the file system.
@@ -537,43 +549,43 @@ LOGGING = {
     "loggers": {
         # Django's generic logger
         "django": {
-            "handlers": ["console"],
+            "handlers": [console_handlers],
             "level": "INFO",
             "propagate": False,
         },
         # Django's template processor
         "django.template": {
-            "handlers": ["console"],
+            "handlers": [console_handlers],
             "level": "INFO",
             "propagate": False,
         },
         # Django's runserver
         "django.server": {
-            "handlers": ["django.server"],
+            "handlers": [server_handlers],
             "level": "INFO",
             "propagate": False,
         },
         # Django's runserver requests
         "django.request": {
-            "handlers": ["django.server"],
+            "handlers": [server_handlers],
             "level": "INFO",
             "propagate": False,
         },
         # OpenID Connect logger
         "oic": {
-            "handlers": ["console"],
+            "handlers": [console_handlers],
             "level": "INFO",
             "propagate": False,
         },
         # Django wrapper for OpenID Connect
         "djangooidc": {
-            "handlers": ["console"],
+            "handlers": [console_handlers],
             "level": "INFO",
             "propagate": False,
         },
         # Our app!
         "registrar": {
-            "handlers": ["console"],
+            "handlers": [console_handlers],
             "level": "DEBUG",
             "propagate": False,
         },
