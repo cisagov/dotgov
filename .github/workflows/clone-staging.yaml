@@ -18,8 +18,8 @@ jobs:
   clone-database:
     runs-on: ubuntu-latest
     env:
-      CF_USERNAME: CF_${{ env.SOURCE_ENVIRONMENT }}_USERNAME
-      CF_PASSWORD: CF_${{ env.SOURCE_ENVIRONMENT }}_PASSWORD
+      CF_USERNAME: CF_MS_USERNAME
+      CF_PASSWORD: CF_STAGING_PASSWORD
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
