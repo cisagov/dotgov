@@ -486,14 +486,6 @@ class JsonServerFormatter(ServerFormatter):
         log_entry = {"server_time": record.server_time, "level": record.levelname, "message": formatted_record}
         return json.dumps(log_entry)
 
-
-# default to json formatted logs
-server_formatter, console_formatter = "json.server", "json"
-
-# don't use json format locally, it makes logs hard to read in console
-if "localhost" in env_base_url:
-    server_formatter, console_formatter = "django.server", "verbose"
-
 LOGGING = {
     "version": 1,
     # Don't import Django's existing loggers
@@ -526,16 +518,33 @@ LOGGING = {
         "console": {
             "level": env_log_level,
             "class": "logging.StreamHandler",
-            "formatter": console_formatter,
+            "formatter": "verbose",
+            # "filters": ["below_error"],
         },
         "django.server": {
             "level": "INFO",
             "class": "logging.StreamHandler",
-            "formatter": server_formatter,
+            "formatter": "django.server",
+        },
+        # log all messages at ERROR level or higher using json formatter
+        # We do this because error logs often comprise many lines,
+        # and json formatting makes them easier to parse.
+        "json": {
+            "level": "ERROR",
+            "class": "logging.StreamHandler",
+            "formatter": "json",
         },
         # No file logger is configured,
         # because containerized apps
         # do not log to the file system.
+    },
+    # filters are used to filter messages based on a callback function
+    "filters": {
+        # filter for messages below ERROR level
+        "below_error": {
+            "()": "django.utils.log.CallbackFilter",
+            "callback": lambda record: record.levelno < logging.ERROR,
+        }
     },
     # define loggers: these are "sinks" into which
     # messages are sent for processing
