@@ -205,7 +205,6 @@ WSGI_APPLICATION = "registrar.config.wsgi.application"
 
 # endregion
 # region: Assets and HTML and Caching---------------------------------------###
-
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 
