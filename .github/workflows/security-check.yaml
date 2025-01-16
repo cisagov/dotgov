@@ -2,17 +2,9 @@ name: Security checks
 
 on:
   push:
-    paths-ignore:
-      - 'docs/**'
-      - '**.md'
-      - '.gitignore'
     branches:
       - main
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - '**.md'
-      - '.gitignore'
     branches:
       - main
 

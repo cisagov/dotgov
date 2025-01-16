@@ -101,7 +101,6 @@ class DomainInformation(TimeStampedModel):
         verbose_name="election office",
     )
 
-    # TODO - Ticket #1911: stub this data from DomainRequest
     organization_type = models.CharField(
         max_length=255,
         choices=DomainRequest.OrgChoicesElectionOffice.choices,
