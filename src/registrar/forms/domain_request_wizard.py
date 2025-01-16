@@ -413,6 +413,7 @@ class CurrentSitesForm(RegistrarForm):
         error_messages={
             "invalid": ("Enter your organization's current website in the required format, like example.com.")
         },
+        widget=forms.URLInput(attrs={"aria-labelledby": "id_current_sites_header id_current_sites_body"}),
     )
 
 

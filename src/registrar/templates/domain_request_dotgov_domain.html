@@ -44,7 +44,7 @@
 
     <p id="domain_instructions" class="margin-top-05">After you enter your domain, we’ll make sure it’s available and that it meets some of our naming requirements. If your domain passes these initial checks, we’ll verify that it meets all our requirements after you complete the rest of this form.</p>
 
-    {% with attr_aria_describedby="domain_instructions domain_instructions2" %}
+    {% with attr_aria_labelledby="domain_instructions domain_instructions2" attr_aria_describedby="id_dotgov_domain-requested_domain--toast" %}
       {# attr_validate / validate="domain" invokes code in getgov.min.js #}
       {% with append_gov=True attr_validate="domain" add_label_class="usa-sr-only" %}
         {% input_with_errors forms.0.requested_domain %}
@@ -67,12 +67,14 @@
     <p id="alt_domain_instructions" class="margin-top-05">Are there other domains you’d like if we can’t give
     you your first choice?</p>
 
-    {% with attr_aria_describedby="alt_domain_instructions" %}
+    {% with attr_aria_labelledby="alt_domain_instructions" %}
       {# Will probably want to remove blank-ok and do related cleanup when we implement delete #}
       {% with attr_validate="domain" append_gov=True add_label_class="usa-sr-only" add_class="blank-ok alternate-domain-input" %}
         {% for form in forms.1 %}
           <div class="repeatable-form">
-            {% input_with_errors form.alternative_domain %}
+            {% with attr_aria_describedby=form.alternative_domain.auto_id|stringformat:"s"|add:"--toast" %}
+              {% input_with_errors form.alternative_domain %}
+            {% endwith %}
           </div>
         {% endfor %}
       {% endwith %}
