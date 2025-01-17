@@ -3442,7 +3442,7 @@ class TestTransferUser(WebTest):
 
     @less_console_noise_decorator
     def test_transfer_user_transfers_user_portfolio_roles_no_error_when_duplicates(self):
-        """Assert that duplicate portfolio user roles do not throw errorsd"""
+        """Assert that duplicate portfolio user roles do not throw errors"""
         portfolio1 = Portfolio.objects.create(organization_name="Hotel California", creator=self.user2)
         UserPortfolioPermission.objects.create(
             user=self.user1, portfolio=portfolio1, roles=[UserPortfolioRoleChoices.ORGANIZATION_ADMIN]
@@ -3595,8 +3595,8 @@ class TestTransferUser(WebTest):
             mock_success_message.assert_any_call(
                 ANY,
                 (
-                    "Data transferred successfully for the following objects: ['Changed requestor "
-                    + 'from "Furiosa Jabassa " to "Max Rokatanski " on immortan.joe@citadel.com\']'
+                    "Data transferred successfully for the following objects: ['Transferred requestor "
+                    + "from Furiosa Jabassa  to Max Rokatanski ']"
                 ),
             )
 
@@ -3606,7 +3606,7 @@ class TestTransferUser(WebTest):
     def test_transfer_user_throws_error_message(self):
         """Test that an error message is thrown if the transfer fails."""
         with patch(
-            "registrar.views.TransferUserView.transfer_user_fields_and_log", side_effect=Exception("Simulated Error")
+            "registrar.views.TransferUserView.transfer_related_fields_and_log", side_effect=Exception("Simulated Error")
         ):
             with patch("django.contrib.messages.error") as mock_error:
                 # Access the transfer user page
