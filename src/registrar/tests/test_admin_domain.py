@@ -779,7 +779,8 @@ class TestDomainAdminWithClient(TestCase):
         response = self.client.get("/admin/registrar/domain/")
         # There are 4 template references to Federal (4) plus four references in the table
         # for our actual domain_request
-        self.assertContains(response, "Federal", count=57)
+        self.assertContains(response, "Federal", count=54)
+        self.assertContains(response, "federal", count=225)
         # This may be a bit more robust
         self.assertContains(response, '<td class="field-converted_generic_org_type">Federal</td>', count=1)
         # Now let's make sure the long description does not exist
