@@ -729,6 +729,7 @@ class ExportDataTest(MockDbForIndividualTests, MockEppLib):
             # "Submitted at",
             "Status",
             "Domain type",
+            "Portfolio",
             "Federal type",
             "Federal agency",
             "Organization name",
@@ -736,6 +737,10 @@ class ExportDataTest(MockDbForIndividualTests, MockEppLib):
             "City",
             "State/territory",
             "Region",
+            "Suborganization",
+            "Requested suborg",
+            "Suborg city",
+            "Suborg state/territory",
             "Creator first name",
             "Creator last name",
             "Creator email",
@@ -765,28 +770,30 @@ class ExportDataTest(MockDbForIndividualTests, MockEppLib):
 
             expected_content = (
                 # Header
-                "Domain request,Status,Domain type,Federal type,Federal agency,Organization name,Election office,"
-                "City,State/territory,Region,Creator first name,Creator last name,Creator email,"
+                "Domain request,Status,Domain type,Portfolio,Federal type,Federal agency,Organization name,"
+                "Election office,City,State/territory,Region,Suborganization,Requested suborg,Suborg city,"
+                "Suborg state/territory,Creator first name,Creator last name,Creator email,"
                 "Creator approved domains count,Creator active requests count,Alternative domains,SO first name,"
                 "SO last name,SO email,SO title/role,Request purpose,Request additional details,Other contacts,"
                 "CISA regional representative,Current websites,Investigator\n"
                 # Content
-                "city5.gov,Approved,Federal,Executive,,Testorg,N/A,,NY,2,,,,1,0,city1.gov,Testy,Tester,testy@town.com,"
-                "Chief Tester,Purpose of the site,There is more,Testy Tester testy2@town.com,,city.com,\n"
-                "city2.gov,In review,Federal,Executive,Portfolio 1 Federal Agency,,N/A,,NY,2,,,,0,1,city1.gov,,,,,"
-                "Purpose of the site,There is more,Testy Tester testy2@town.com,,city.com,\n"
-                "city3.gov,Submitted,Federal,Executive,Portfolio 1 Federal Agency,,N/A,,NY,2,,,,0,1,"
+                "city5.gov,Approved,Federal,No,Executive,,Testorg,N/A,,NY,2,requested_suborg,SanFran,CA,,,,,1,0,"
+                "city1.gov,Testy,Tester,testy@town.com,Chief Tester,Purpose of the site,There is more,"
+                "Testy Tester testy2@town.com,,city.com,\n"
+                "city2.gov,In review,Federal,Yes,Executive,Portfolio 1 Federal Agency,,N/A,,,2,SubOrg 1,,,,,,,0,"
+                "1,city1.gov,,,,,Purpose of the site,There is more,Testy Tester testy2@town.com,,city.com,\n"
+                "city3.gov,Submitted,Federal,Yes,Executive,Portfolio 1 Federal Agency,,N/A,,,2,,,,,,,,0,1,"
                 '"cheeseville.gov, city1.gov, igorville.gov",,,,,Purpose of the site,CISA-first-name CISA-last-name | '
                 'There is more,"Meow Tester24 te2@town.com, Testy1232 Tester24 te2@town.com, '
                 'Testy Tester testy2@town.com",'
                 'test@igorville.com,"city.com, https://www.example2.com, https://www.example.com",\n'
-                "city4.gov,Submitted,City,Executive,,Testorg,Yes,,NY,2,,,,0,1,city1.gov,Testy,"
+                "city4.gov,Submitted,City,No,Executive,,Testorg,Yes,,NY,2,,,,,,,,0,1,city1.gov,Testy,"
                 "Tester,testy@town.com,"
                 "Chief Tester,Purpose of the site,CISA-first-name CISA-last-name | There is more,"
                 "Testy Tester testy2@town.com,"
                 "cisaRep@igorville.gov,city.com,\n"
-                "city6.gov,Submitted,Federal,Executive,Portfolio 1 Federal Agency,,N/A,,NY,2,,,,0,1,city1.gov,,,,,"
-                "Purpose of the site,CISA-first-name CISA-last-name | There is more,Testy Tester testy2@town.com,"
+                "city6.gov,Submitted,Federal,Yes,Executive,Portfolio 1 Federal Agency,,N/A,,,2,,,,,,,,0,1,city1.gov,"
+                ",,,,Purpose of the site,CISA-first-name CISA-last-name | There is more,Testy Tester testy2@town.com,"
                 "cisaRep@igorville.gov,city.com,\n"
             )
 

@@ -2101,6 +2101,10 @@ class TestPatchSuborganizations(MockDbForIndividualTests):
         1. Fewest spaces
         2. Most leading capitals
         """
+        # Delete any other suborganizations defined in the initial test dataset
+        DomainRequest.objects.all().delete()
+        Suborganization.objects.all().delete()
+
         Suborganization.objects.create(name="Test Organization ", portfolio=self.portfolio_1)
         Suborganization.objects.create(name="test organization", portfolio=self.portfolio_1)
         Suborganization.objects.create(name="Test Organization", portfolio=self.portfolio_1)
@@ -2114,6 +2118,10 @@ class TestPatchSuborganizations(MockDbForIndividualTests):
     @less_console_noise_decorator
     def test_hardcoded_record(self):
         """Tests that our hardcoded records update as we expect them to"""
+        # Delete any other suborganizations defined in the initial test dataset
+        DomainRequest.objects.all().delete()
+        Suborganization.objects.all().delete()
+
         # Create orgs with old and new name formats
         old_name = "USDA/OC"
         new_name = "USDA, Office of Communications"
@@ -2123,7 +2131,7 @@ class TestPatchSuborganizations(MockDbForIndividualTests):
 
         self.run_patch_suborganizations()
 
-        # Verify only the new one remains
+        # Verify only the new one of the two remains
         self.assertEqual(Suborganization.objects.count(), 1)
         remaining = Suborganization.objects.first()
         self.assertEqual(remaining.name, new_name)

@@ -1660,6 +1660,27 @@ class DomainRequestExport(BaseExport):
                 default=F("organization_name"),
                 output_field=CharField(),
             ),
+            "converted_city": Case(
+                # When portfolio is present, use its value instead
+                When(portfolio__isnull=False, then=F("portfolio__city")),
+                # Otherwise, return the natively assigned value
+                default=F("city"),
+                output_field=CharField(),
+            ),
+            "converted_state_territory": Case(
+                # When portfolio is present, use its value instead
+                When(portfolio__isnull=False, then=F("portfolio__state_territory")),
+                # Otherwise, return the natively assigned value
+                default=F("state_territory"),
+                output_field=CharField(),
+            ),
+            "converted_suborganization_name": Case(
+                # When sub_organization is present, use its name
+                When(sub_organization__isnull=False, then=F("sub_organization__name")),
+                # Otherwise, return empty string
+                default=Value(""),
+                output_field=CharField(),
+            ),
             "converted_so_email": Case(
                 # When portfolio is present, use its value instead
                 When(portfolio__isnull=False, then=F("portfolio__senior_official__email")),
@@ -1786,6 +1807,10 @@ class DomainRequestExport(BaseExport):
         status = model.get("status")
         status_display = DomainRequest.DomainRequestStatus.get_status_label(status) if status else None
 
+        # Handle the portfolio field. Display as a Yes/No
+        portfolio = model.get("portfolio")
+        portfolio_display = "Yes" if portfolio is not None else "No"
+
         # Handle the region field.
         state_territory = model.get("state_territory")
         region = get_region(state_territory) if state_territory else None
@@ -1819,6 +1844,7 @@ class DomainRequestExport(BaseExport):
             "Election office": human_readable_election_board,
             "Federal type": human_readable_federal_type,
             "Domain type": human_readable_org_type,
+            "Portfolio": portfolio_display,
             "Request additional details": additional_details,
             # Annotated fields - passed into the request dict.
             "Creator approved domains count": model.get("creator_approved_domains_count", 0),
@@ -1827,6 +1853,10 @@ class DomainRequestExport(BaseExport):
             "Other contacts": model.get("all_other_contacts"),
             "Current websites": model.get("all_current_websites"),
             # Untouched FK fields - passed into the request dict.
+            "Suborganization": model.get("converted_suborganization_name"),
+            "Requested suborg": model.get("requested_suborganization"),
+            "Suborg city": model.get("suborganization_city"),
+            "Suborg state/territory": model.get("suborganization_state_territory"),
             "Federal agency": model.get("converted_federal_agency"),
             "SO first name": model.get("converted_senior_official_first_name"),
             "SO last name": model.get("converted_senior_official_last_name"),
@@ -1838,8 +1868,8 @@ class DomainRequestExport(BaseExport):
             "Investigator": model.get("investigator__email"),
             # Untouched fields
             "Organization name": model.get("converted_organization_name"),
-            "City": model.get("city"),
-            "State/territory": model.get("state_territory"),
+            "City": model.get("converted_city"),
+            "State/territory": model.get("converted_state_territory"),
             "Request purpose": model.get("purpose"),
             "CISA regional representative": model.get("cisa_representative_email"),
             "Last submitted date": model.get("last_submitted_date"),
@@ -2006,6 +2036,7 @@ class DomainRequestDataFull(DomainRequestExport):
             "Last status update",
             "Status",
             "Domain type",
+            "Portfolio",
             "Federal type",
             "Federal agency",
             "Organization name",
@@ -2013,6 +2044,10 @@ class DomainRequestDataFull(DomainRequestExport):
             "City",
             "State/territory",
             "Region",
+            "Suborganization",
+            "Requested suborg",
+            "Suborg city",
+            "Suborg state/territory",
             "Creator first name",
             "Creator last name",
             "Creator email",
