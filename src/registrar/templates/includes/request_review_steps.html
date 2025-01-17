@@ -88,7 +88,7 @@
         {% endwith %}
 
         {% if domain_request.alternative_domains.all %}
-            <h3 class="header--body text-primary-dark margin-bottom-0">Alternative domains</h3>
+            <h4>Alternative domains</h4>
             <ul class="usa-list usa-list--unstyled margin-top-0">
             {% for site in domain_request.alternative_domains.all %}
                 <li>{{ site.website }}</li>
@@ -132,8 +132,8 @@
         {% with title=form_titles|get_item:step %}
             {% if domain_request.has_additional_details %}
                 {% include "includes/summary_item.html" with title="Additional Details" value=" " heading_level=heading_level editable=is_editable edit_link=domain_request_url %}
-                <h3 class="header--body text-primary-dark margin-bottom-0">CISA Regional Representative</h3>
-                <ul class="usa-list usa-list--unstyled margin-top-0">
+                <h4 class="margin-bottom-0">CISA Regional Representative</h4>
+                <ul class="usa-list usa-list--unstyled margin-top-05">
                     {% if domain_request.cisa_representative_first_name %}
                         <li>{{domain_request.cisa_representative_first_name}} {{domain_request.cisa_representative_last_name}}</li>
                     {% if domain_request.cisa_representative_email %}
@@ -144,8 +144,8 @@
                     {% endif %}
                 </ul>
 
-            <h3 class="header--body text-primary-dark margin-bottom-0">Anything else</h3>
-            <ul class="usa-list usa-list--unstyled margin-top-0">
+            <h4 class="margin-bottom-0">Anything else</h4>
+            <ul class="usa-list usa-list--unstyled margin-top-05">
                 {% if domain_request.anything_else %}
                     {{domain_request.anything_else}}
                 {% else %}

@@ -1,5 +1,4 @@
 @use "uswds-core" as *;
-@use "typography" as *;
 
 .register-form-step > h1 {
   //align to top of sidebar on first page of the form
@@ -12,11 +11,7 @@
   margin-top: units(1);
 }
 
-// header--body is used on the summary page and
-// should not be styled like the register form headers
-.register-form-step h3 {
-  color: color('primary-dark');
-  letter-spacing: $letter-space--xs;
+.register-form-step h3:not(.margin-top-05) {
   margin-top: units(3);
   margin-bottom: 0;
 
@@ -64,26 +59,10 @@
   margin-top: units(3);
 }
 
-  .summary-item hr,
+.summary-item hr,
 .review__step hr {
   border: none; //reset
   border-top: 1px solid color('primary-dark');
   margin-top: 0;
-  margin-bottom: units(0.5);
-}
-
-.review__step__title a:visited {
-  color: color('primary');
-}
-
-.review__step__name {
-  color: color('primary-dark');
-  font-weight: font-weight('semibold');
-  margin-bottom: units(0.5);
-}
-
-.review__step__subheading {
-  color: color('primary-dark');
-  font-weight: font-weight('semibold');
   margin-bottom: units(0.5);
 }

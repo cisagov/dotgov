@@ -10,41 +10,35 @@ address,
   max-width: measure(5);
 }
 
-h1 {
+h1:not(.usa-alert__heading),
+h2:not(.usa-alert__heading),
+h3:not(.usa-alert__heading),
+h4:not(.usa-alert__heading),
+h5:not(.usa-alert__heading),
+h6:not(.usa-alert__heading) {
+  color: color('primary-darker');
+}
+
+h1, .h1 {
+  font-size: 2.125rem;
   @include typeset('sans', '2xl', 2);
   margin: 0 0 units(2);
-  color: color('primary-darker');
 }
 
-h2 {
-  font-weight: font-weight('semibold');
-  line-height: line-height('heading', 3);
+h2, .h2 {
+  line-height: 1.3;
   margin: units(4) 0 units(1);
-  color: color('primary-darker');
 }
 
-.header--body {
-  margin-top: units(2);
+h3, .h3 {
+  font-size: 1.25rem;
   font-weight: font-weight('semibold');
-  // The units mixin can only get us close, so it's between 
-  // hardcoding the value and using in markup
-  font-size: 16.96px;
 }
 
-.h4--sm-05 {
-  font-size: size('body', 'sm');
-  font-weight: normal;
-  color: color('primary');
-  margin-bottom: units(0.5);
-}
-
-// Normalize typography in forms
-.usa-form,
-.usa-form fieldset {
-  font-size: 1rem;
-  .usa-legend {
-    font-size: 1rem;
-  }
+h4, .h4 {
+  font-size: 1.125rem;
+  line-height: 1.25;
+  font-weight: font-weight('semibold');
 }
 
 .p--blockquote {

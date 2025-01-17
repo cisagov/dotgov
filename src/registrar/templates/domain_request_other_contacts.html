@@ -31,13 +31,13 @@
             <fieldset class="usa-fieldset repeatable-form padding-y-1">
             
               <legend class="float-left-tablet">
-                  <h2 class="margin-top-1">Organization contact {{ forloop.counter }}</h2>
+                  <h3 class="margin-top-05">Organization contact {{ forloop.counter }}</h2>
               </legend>
 
-              <button type="button" class="usa-button usa-button--unstyled display-block float-right-tablet delete-record margin-bottom-2 text-secondary line-height-sans-5">
+              <button type="button" class="usa-button usa-button--unstyled display-block float-right-tablet delete-record margin-top-1 text-secondary line-height-sans-5 usa-button--with-icon">
                   <svg class="usa-icon" aria-hidden="true" focusable="false" role="img" width="24" height="24">
                   <use xlink:href="{%static 'img/sprite.svg'%}#delete"></use>
-                  </svg><span class="margin-left-05">Delete</span>
+                  </svg>Delete
               </button>
 
 
@@ -70,7 +70,7 @@
             </fieldset>
         {% endfor %}
 
-        <button type="button" class="usa-button usa-button--unstyled" id="add-form">
+        <button type="button" class="usa-button usa-button--unstyled usa-button--with-icon" id="add-form">
             <svg class="usa-icon" aria-hidden="true" focusable="false" role="img" width="24" height="24">
             <use xlink:href="{%static 'img/sprite.svg'%}#add_circle"></use>
             </svg><span class="margin-left-05">Add another contact</span>

@@ -39,34 +39,32 @@
 
             {% block status_summary %}
             <div
-                class="usa-summary-box dotgov-status-box margin-top-3 padding-left-2" 
+                class="usa-summary-box margin-top-3 padding-y-2 margin-bottom-1" 
                 role="region"
                 aria-labelledby="summary-box-key-information"
             >
-            <div class="usa-summary-box__body">
-                <p class="usa-summary-box__heading font-sans-md margin-bottom-0" 
-                    id="summary-box-key-information"
-                > 
-                <span class="text-bold text-primary-darker">
-                    Status:
-                </span>
-                {{ DomainRequest.get_status_display|default:"ERROR Please contact technical support/dev" }}
-                </p>
+                <div class="usa-summary-box__body">
+                    <div class="usa-summary-box__text padding-top-0" 
+                    > 
+                        <p class="font-sans-md margin-y-0 text-primary-darker">
+                            <strong>Status:</strong>
+                            {{ DomainRequest.get_status_display|default:"ERROR Please contact technical support/dev" }}
+                        </p>
+                    </div>
+                </div>
             </div>
-            </div>
-            <br>
             {% endblock status_summary %}
             
             {% block status_metadata %}
 
             {% if portfolio %}
                 {% if DomainRequest.creator %}
-                <p class="margin-top-1 margin-bottom-1">
-                    <b class="review__step__name">Created by:</b> {{DomainRequest.creator.email|default:DomainRequest.creator.get_formatted_name }}
+                <p>
+                    <strong class="text-primary-dark">Created by:</strong> {{DomainRequest.creator.email|default:DomainRequest.creator.get_formatted_name }}
                 </p>
                 {% else %}
-                <p class="margin-top-1 margin-bottom-1">
-                    <b class="review__step__name">No creator found:</b> this is an error, please email <a href="mailto:help@get.gov" class="usa-link">help@get.gov</a>.
+                <p>
+                    <strong class="text-primary-dark">No creator found:</strong> this is an error, please email <a href="mailto:help@get.gov" class="usa-link">help@get.gov</a>.
                 </p>
                 {% endif %}
             {% endif %}
@@ -77,49 +75,32 @@
             There is some code repetition, but it gives us more flexibility rather than a dense reduction. 
             Leave it this way until we've solidified our requirements.
             {% endcomment %}
-            {% if DomainRequest.status == statuses.STARTED %}
-            {% with first_started_date=DomainRequest.get_first_status_started_date|date:"F j, Y" %}
-            <p class="margin-top-1">
+            
+            <p>
+                {% if DomainRequest.status == statuses.STARTED %}
+                {% with first_started_date=DomainRequest.get_first_status_started_date|date:"F j, Y" %}
                 {% comment %} 
                 A newly created domain request will not have a value for last_status update.
                 This is because the status never really updated. 
                 However, if this somehow goes back to started we can default to displaying that new date.
                 {% endcomment %}
-                <b class="review__step__name">Started on:</b> {{last_status_update|default:first_started_date}}
-            </p>
-            {% endwith %}
-            {% elif DomainRequest.status == statuses.SUBMITTED %}
-            <p class="margin-top-1 margin-bottom-1">
-                <b class="review__step__name">Submitted on:</b> {{last_submitted|default:first_submitted }}
-            </p>
-            <p class="margin-top-1">
-                <b class="review__step__name">Last updated on:</b> {{DomainRequest.updated_at|date:"F j, Y"}}
-            </p>
-            {% elif DomainRequest.status == statuses.ACTION_NEEDED %}
-            <p class="margin-top-1 margin-bottom-1">
-                <b class="review__step__name">Submitted on:</b> {{last_submitted|default:first_submitted }}
-            </p>
-            <p class="margin-top-1">
-                <b class="review__step__name">Last updated on:</b> {{DomainRequest.updated_at|date:"F j, Y"}}
-            </p>
-            {% elif DomainRequest.status == statuses.REJECTED %}
-            <p class="margin-top-1 margin-bottom-1">
-                <b class="review__step__name">Submitted on:</b> {{last_submitted|default:first_submitted }}
-            </p>
-            <p class="margin-top-1">
-                <b class="review__step__name">Rejected on:</b> {{last_status_update}}
-            </p>
-            {% elif DomainRequest.status == statuses.WITHDRAWN %}
-            <p class="margin-top-1 margin-bottom-1">
-                <b class="review__step__name">Submitted on:</b> {{last_submitted|default:first_submitted }}
-            </p>
-            <p class="margin-top-1">
-                <b class="review__step__name">Withdrawn on:</b> {{last_status_update}}
-            </p>
-            {% else %}
-            {% comment %} Shown for in_review, approved, ineligible {% endcomment %}
-            <p class="margin-top-1">
-                <b class="review__step__name">Last updated on:</b> {{DomainRequest.updated_at|date:"F j, Y"}}
+                    <strong class="text-primary-dark">Started on:</strong> {{last_status_update|default:first_started_date}}
+                {% endwith %}
+                {% elif DomainRequest.status == statuses.SUBMITTED %}
+                    <strong class="text-primary-dark">Submitted on:</strong> {{last_submitted|default:first_submitted }}<br>
+                    <strong class="text-primary-dark">Last updated on:</strong> {{DomainRequest.updated_at|date:"F j, Y"}}
+                {% elif DomainRequest.status == statuses.ACTION_NEEDED %}
+                    <strong class="text-primary-dark">Submitted on:</strong> {{last_submitted|default:first_submitted }}<br>
+                    <strong class="text-primary-dark">Last updated on:</strong> {{DomainRequest.updated_at|date:"F j, Y"}}
+                {% elif DomainRequest.status == statuses.REJECTED %}
+                    <strong class="text-primary-dark">Submitted on:</strong> {{last_submitted|default:first_submitted }}<br>
+                    <strong class="text-primary-dark">Rejected on:</strong> {{last_status_update}}
+                {% elif DomainRequest.status == statuses.WITHDRAWN %}
+                    <strong class="text-primary-dark">Submitted on:</strong> {{last_submitted|default:first_submitted }}<br>
+                    <strong class="text-primary-dark">Withdrawn on:</strong> {{last_status_update}}
+                {% else %}
+                {% comment %} Shown for in_review, approved, ineligible {% endcomment %}
+                    <strong class="text-primary-dark">Last updated on:</strong> {{DomainRequest.updated_at|date:"F j, Y"}}
             </p>
             {% endif %}
             {% endwith %}
@@ -127,7 +108,7 @@
 
             {% block status_blurb %}
             {% if DomainRequest.is_awaiting_review %}
-                <p>{% include "includes/domain_request_awaiting_review.html" with show_withdraw_text=DomainRequest.is_withdrawable %}</p>
+                {% include "includes/domain_request_awaiting_review.html" with show_withdraw_text=DomainRequest.is_withdrawable %}
             {% endif %}
             {% endblock status_blurb %}
 
@@ -142,20 +123,19 @@
 
         <div class="grid-col maxw-fit-content desktop:grid-offset-2 ">
             {% block request_summary_header %}
-            <h2 class="text-primary-darker"> Summary of your domain request </h2> 
+            <h2> Summary of your domain request </h2> 
             {% endblock request_summary_header%}
 
             {% block request_summary %}
             {% if portfolio %}
                 {% include "includes/portfolio_request_review_steps.html" with is_editable=False domain_request=DomainRequest %}
             {% else %}
-                {% with heading_level='h3' %}
                 {% with org_type=DomainRequest.get_generic_org_type_display %}
-                {% include "includes/summary_item.html" with title='Type of organization' value=org_type heading_level=heading_level %}
+                {% include "includes/summary_item.html" with title='Type of organization' value=org_type %}
                 {% endwith %}
 
                 {% if DomainRequest.tribe_name %}
-                    {% include "includes/summary_item.html" with title='Tribal government' value=DomainRequest.tribe_name heading_level=heading_level %}
+                    {% include "includes/summary_item.html" with title='Tribal government' value=DomainRequest.tribe_name %}
 
                     {% if DomainRequest.federally_recognized_tribe %}
                         <p>Federally-recognized tribe</p>
@@ -168,56 +148,56 @@
                 {% endif %}
 
                 {% if DomainRequest.get_federal_type_display %}
-                    {% include "includes/summary_item.html" with title='Federal government branch' value=DomainRequest.get_federal_type_display heading_level=heading_level %}
+                    {% include "includes/summary_item.html" with title='Federal government branch' value=DomainRequest.get_federal_type_display %}
                 {% endif %}
 
                 {% if DomainRequest.is_election_board %}
                     {% with value=DomainRequest.is_election_board|yesno:"Yes,No,Incomplete" %}
-                        {% include "includes/summary_item.html" with title='Election office' value=value heading_level=heading_level %}
+                        {% include "includes/summary_item.html" with title='Election office' value=value %}
                     {% endwith %}
                 {% endif %}
 
                 {% if DomainRequest.organization_name %}
-                    {% include "includes/summary_item.html" with title='Organization' value=DomainRequest  address='true' heading_level=heading_level %}
+                    {% include "includes/summary_item.html" with title='Organization' value=DomainRequest  address='true' %}
                 {% endif %}
 
                 {% if DomainRequest.about_your_organization %}
-                    {% include "includes/summary_item.html" with title='About your organization' value=DomainRequest.about_your_organization heading_level=heading_level %}
+                    {% include "includes/summary_item.html" with title='About your organization' value=DomainRequest.about_your_organization %}
                 {% endif %}
 
                 {% if DomainRequest.senior_official %}
-                    {% include "includes/summary_item.html" with title='Senior official' value=DomainRequest.senior_official contact='true' heading_level=heading_level %}
+                    {% include "includes/summary_item.html" with title='Senior official' value=DomainRequest.senior_official contact='true' %}
                 {% endif %}
 
                 {% if DomainRequest.current_websites.all %}
-                    {% include "includes/summary_item.html" with title='Current websites' value=DomainRequest.current_websites.all list='true' heading_level=heading_level %}
+                    {% include "includes/summary_item.html" with title='Current websites' value=DomainRequest.current_websites.all list='true' %}
                 {% endif %}
 
                 {% if DomainRequest.requested_domain %}
-                    {% include "includes/summary_item.html" with title='.gov domain' value=DomainRequest.requested_domain heading_level=heading_level %}
+                    {% include "includes/summary_item.html" with title='.gov domain' value=DomainRequest.requested_domain %}
                 {% endif %}
 
                 {% if DomainRequest.alternative_domains.all %}
-                    {% include "includes/summary_item.html" with title='Alternative domains' value=DomainRequest.alternative_domains.all list='true' heading_level=heading_level %}
+                    {% include "includes/summary_item.html" with title='Alternative domains' value=DomainRequest.alternative_domains.all list='true' %}
                 {% endif %}
 
                 {% if DomainRequest.purpose %}
-                    {% include "includes/summary_item.html" with title='Purpose of your domain' value=DomainRequest.purpose heading_level=heading_level %}
+                    {% include "includes/summary_item.html" with title='Purpose of your domain' value=DomainRequest.purpose %}
                 {% endif %}
 
                 {% if DomainRequest.creator %}
-                    {% include "includes/summary_item.html" with title='Your contact information' value=DomainRequest.creator contact='true' heading_level=heading_level %}
+                    {% include "includes/summary_item.html" with title='Your contact information' value=DomainRequest.creator contact='true' %}
                 {% endif %}
 
                 {% if DomainRequest.other_contacts.all %}
-                    {% include "includes/summary_item.html" with title='Other employees from your organization' value=DomainRequest.other_contacts.all contact='true' list='true' heading_level=heading_level %}
+                    {% include "includes/summary_item.html" with title='Other employees from your organization' value=DomainRequest.other_contacts.all contact='true' list='true' %}
                 {% else %}
-                    {% include "includes/summary_item.html" with title='Other employees from your organization' value=DomainRequest.no_other_contacts_rationale heading_level=heading_level %}
+                    {% include "includes/summary_item.html" with title='Other employees from your organization' value=DomainRequest.no_other_contacts_rationale %}
                 {% endif %}
 
             {# We always show this field even if None #}
             {% if DomainRequest %}
-                <h3 class="header--body text-primary-dark margin-bottom-0">CISA Regional Representative</h3>
+                <h4 class="margin-bottom-0">CISA Regional Representative</h4>
                 <ul class="usa-list usa-list--unstyled margin-top-0">
                     {% if DomainRequest.cisa_representative_first_name %}
                     {{ DomainRequest.get_formatted_cisa_rep_name }}
@@ -225,7 +205,7 @@
                     No
                     {% endif %}
                 </ul>
-                <h3 class="header--body text-primary-dark margin-bottom-0">Anything else</h3>
+                <h4 class="margin-bottom-0">Anything else</h4>
                 <ul class="usa-list usa-list--unstyled margin-top-0">
                     {% if DomainRequest.anything_else %}
                     {{DomainRequest.anything_else}}
@@ -234,7 +214,6 @@
                     {% endif %}
                 </ul>
             {% endif %}
-        {% endwith %}
     {% endif %}
     {% endblock request_summary%}
         </div>

@@ -21,21 +21,17 @@
 
   {{ block.super }}
   <div class="margin-top-4 tablet:grid-col-10">
-    <h2 class="text-bold text-primary-dark domain-name-wrap">{{ domain.name }}</h2>
+    <h2 class="string-wrap">{{ domain.name }}</h2>
     <div
-        class="usa-summary-box dotgov-status-box padding-bottom-0 margin-top-3 padding-left-2{% if not domain.is_expired %}{% if domain.state == domain.State.UNKNOWN or domain.state == domain.State.DNS_NEEDED %} dotgov-status-box--action-need{% endif %}{% endif %}"
+        class="usa-summary-box padding-y-2 margin-bottom-1"
         role="region"
         aria-labelledby="summary-box-key-information"
     >
       <div class="usa-summary-box__body">
-        <p class="usa-summary-box__heading font-sans-md margin-bottom-0" 
-          id="summary-box-key-information"
+        <div class="usa-summary-box__text padding-top-0"
         > 
-          <span class="text-bold text-primary-darker">
-            Status:
-          </span>
-          <span class="text-primary-darker">
-
+          <p class="font-sans-md margin-top-0 margin-bottom-05 text-primary-darker">
+            <strong>Status:</strong>
             {# UNKNOWN domains would not have an expiration date and thus would show 'Expired' #}
             {% if domain.is_expired and domain.state != domain.State.UNKNOWN %}
               Expired
@@ -46,9 +42,10 @@
             {% else %}
               {{ domain.state|title }}
             {% endif %}
-          </span>
+          </p>
+
           {% if domain.get_state_help_text %}
-            <div class="padding-top-1 text-primary-darker">
+            <p class="margin-y-0 text-primary-darker">
               {% if has_domain_renewal_flag and domain.is_expired and is_domain_manager %}
                 This domain has expired, but it is still online. 
                 {% url 'domain-renewal' pk=domain.id as url %}
@@ -64,13 +61,11 @@
               {% else %}
                 {{ domain.get_state_help_text }}
               {% endif %}
-            </div>
+            </p>
           {% endif %}
-        </p>
+          </div>
       </div>
-    </div>
-    <br>
-    
+    </div>    
 
     {% include "includes/domain_dates.html" %}
 

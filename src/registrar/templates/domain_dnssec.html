@@ -35,21 +35,23 @@
     {% csrf_token %}
     {% if has_dnssec_records %}
     <div
-        class="usa-summary-box dotgov-status-box padding-top-0" 
+        class="usa-summary-box " 
         role="region"
         aria-labelledby="Important notes on disabling DNSSEC"
     >
       <div class="usa-summary-box__body">
-        <p class="usa-summary-box__heading font-sans-md margin-bottom-0" 
-           id="summary-box-key-information"
-        >
-        <h2>To fully disable DNSSEC </h2>
-        <ul class="usa-list">
-          <li>Click “Disable DNSSEC”  below.</li>
-          <li>Wait until the Time to Live (TTL) expires on your DNSSEC records managed by your DNS hosting provider. This is often less than 24 hours, but confirm with your provider.</li>
-          <li>After the TTL expiration, disable DNSSEC at your DNS hosting provider. </li>
-        </ul>
-        <p><strong>Warning:</strong> If you disable DNSSEC at your DNS hosting provider before TTL expiration, this may cause your domain to appear offline.</p>
+        <h2 class="usa-summary-box__heading"
+        >To fully disable DNSSEC</h2>
+
+        <div class="usa-summary-box__text">
+          <ul class="usa-list">
+            <li>Click “Disable DNSSEC”  below.</li>
+            <li>Wait until the Time to Live (TTL) expires on your DNSSEC records managed by your DNS hosting provider. This is often less than 24 hours, but confirm with your provider.</li>
+            <li>After the TTL expiration, disable DNSSEC at your DNS hosting provider. </li>
+          </ul>
+          <p><strong>Warning:</strong> If you disable DNSSEC at your DNS hosting provider before TTL expiration, this may cause your domain to appear offline.</p>
+        </div>
+        
       </div>
     </div>
     <h2>DNSSEC is enabled on your domain</h2>

@@ -188,7 +188,7 @@ html[data-theme="dark"] {
 }
 
 #branding h1,
-h1, h2, h3,
+.dashboard h1, .dashboard h2, .dashboard h3,
 .module h2 {
     font-weight: font-weight('bold');
 }
@@ -516,10 +516,6 @@ input[type=submit].button--dja-toolbar:focus, input[type=submit].button--dja-too
     max-width: 68ex;
 }
 
-.usa-summary-box__dhs-color {
-    color: $dhs-blue-70;
-}
-
 details.dja-detail-table {
     display: inline-table;
     background-color: var(--body-bg);
@@ -812,18 +808,6 @@ div.dja__model-description{
     text-decoration: underline !important;
 }
 
-//-- Override some styling for the USWDS summary box (per design quidance for ticket #2055
-.usa-summary-box {
-    background: #{$dhs-blue-10};
-    border-color: #{$dhs-blue-30};
-    max-width: 72ex;
-    word-wrap: break-word;
-}
-
-.usa-summary-box h3 {
-    color: #{$dhs-blue-60};
-}
-
 .module caption, .inline-group h2 {
     text-transform: capitalize;
 }
@@ -927,14 +911,6 @@ ul.add-list-reset {
 
 .dl-dja dt {
     font-size: 14px;
-}
-
-.domain-name-wrap {
-    white-space: normal;
-    word-wrap: break-word;
-    overflow: visible; 
-    word-break: break-all;
-    max-width: 100%; 
 }
 
 .organization-admin-label {

@@ -3,7 +3,7 @@ Template include for read-only form fields
 {% endcomment %}
 
 
-<h4 class="read-only-label">{{ field.label }}</h4>
+<h4 class="margin-bottom-05">{{ field.label }}</h4>
 {% if label_description %}
     <p class="usa-hint margin-top-0 margin-bottom-05">{{ label_description }}</p>
 {% endif %}
@@ -11,4 +11,4 @@ Template include for read-only form fields
 This allows us to customize the displayed value. 
 For instance, Select fields will display the id by default. 
 {% endcomment %}
-<p class="read-only-value">{{ value|default:field.value }}</p>
+<p class="margin-top-0">{{ value|default:field.value }}</p>

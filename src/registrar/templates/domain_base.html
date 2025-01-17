@@ -11,7 +11,7 @@
   <div class="grid-row grid-gap {% if not is_widescreen_centered %}max-width--grid-container{% endif %}">
     <div class="tablet:grid-col-3 ">
       <p class="font-body-md margin-top-0 margin-bottom-2
-                text-primary-darker text-semibold domain-name-wrap"
+                text-primary-darker text-semibold string-wrap"
       >
         <span class="usa-sr-only"> Domain name:</span> {{ domain.name }}
       </p>
@@ -26,7 +26,7 @@
       {% if not domain.domain_info %}
         <div class="usa-alert usa-alert--error margin-bottom-2">
           <div class="usa-alert__body">
-            <h4 class="usa-alert__heading larger-font-sizing">Domain missing domain information</h4>
+            <h4 class="usa-alert__heading">Domain missing domain information</h4>
             <p class="usa-alert__text ">
               You are attempting to manage a domain, {{ domain.name }}, which does not have a domain information object. Please correct this in the admin by editing the domain, and adding domain information, as appropriate.
             </p>
@@ -36,7 +36,7 @@
         {% if is_analyst_or_superuser and analyst_action == 'edit' and analyst_action_location == domain.pk %}
         <div class="usa-alert usa-alert--warning margin-bottom-2">
           <div class="usa-alert__body">
-            <h4 class="usa-alert__heading larger-font-sizing">Attention!</h4>
+            <h4 class="usa-alert__heading">Attention!</h4>
             <p class="usa-alert__text ">
               You are making changes to a registrant’s domain. When finished making changes, close this tab and inform the registrant of your updates.
             </p>

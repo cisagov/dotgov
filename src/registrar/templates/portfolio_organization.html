@@ -37,8 +37,8 @@
             {% include "includes/required_fields.html" %}
             <form class="usa-form usa-form--large desktop:margin-top-4" method="post" novalidate>
                 {% csrf_token %}
-                <h4 class="read-only-label">Organization name</h4>
-                <p class="read-only-value">
+                <h4 class="margin-bottom-05">Organization name</h4>
+                <p class="margin-top-0">
                     {{ portfolio.federal_agency }}
                 </p>
                 {% input_with_errors form.address_line1 %}
@@ -53,8 +53,8 @@
                 </button>
             </form>
         {% else %}
-            <h4 class="read-only-label">Organization name</h4>
-            <p class="read-only-value">
+            <h4 class="margin-bottom-05">Organization name</h4>
+            <p class="margin-top-0">
                 {{ portfolio.federal_agency }}
             </p>
             {% if form.address_line1.value is not None %}

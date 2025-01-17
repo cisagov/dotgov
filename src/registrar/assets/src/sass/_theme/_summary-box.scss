@@ -1,0 +1,11 @@
+@use "uswds-core" as *;
+
+.usa-summary-box {
+    background-color: color('primary-lightest'); 
+    border-color: color('accent-cool-lighter');
+}
+  
+.usa-summary-box--action-needed {
+    background-color: color('warning-lighter'); 
+    border-color: color('warning');
+}

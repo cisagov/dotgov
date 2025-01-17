@@ -1,7 +1,14 @@
 @use "uswds-core" as *;
 @use "cisa_colors" as *;
-@use "typography" as *;
 
+// Normalize typography in forms
+.usa-form,
+.usa-form fieldset {
+  font-size: 1rem;
+  .usa-legend {
+    font-size: 1rem;
+  }
+}
 .usa-form .usa-button {
   margin-top: units(3);
 }
@@ -67,16 +74,6 @@ legend.float-left-tablet + button.float-right-tablet {
   @include at-media('tablet') {
     margin-top: 1rem;
   }
-}
-
-.read-only-label {
-  @extend .h4--sm-05;
-  font-weight: bold;
-  color: color('primary-dark');
-}
-
-.read-only-value {
-  margin-top: units(0);
 }
 
 .bg-gray-1 .usa-radio {

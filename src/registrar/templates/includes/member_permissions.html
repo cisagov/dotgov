@@ -1,4 +1,4 @@
-<h4 class="margin-bottom-0 text-primary">Member access</h4>
+<h4 class="margin-bottom-0">Member access</h4>
 {% if permissions.roles and 'organization_admin' in permissions.roles %}
     <p class="margin-top-0">Admin access</p>
 {% elif permissions.roles and 'organization_member' in permissions.roles %}
@@ -7,7 +7,7 @@
     <p class="margin-top-0">⎯</p>
 {% endif %}
 
-<h4 class="margin-bottom-0 text-primary">Organization domain requests</h4>
+<h4 class="margin-bottom-0">Organization domain requests</h4>
 {% if member_has_edit_request_portfolio_permission %}
     <p class="margin-top-0">View all requests plus create requests</p>
 {% elif member_has_view_all_requests_portfolio_permission %}
@@ -16,7 +16,7 @@
     <p class="margin-top-0">No access</p>
 {% endif %}
 
-<h4 class="margin-bottom-0 text-primary">Organization members</h4>
+<h4 class="margin-bottom-0">Organization members</h4>
 {% if member_has_edit_members_portfolio_permission %}
     <p class="margin-top-0">View all members plus manage members</p>
 {% elif member_has_view_members_portfolio_permission %}

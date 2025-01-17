@@ -59,7 +59,6 @@ body {
   }
 
   h2 {
-    color: color('primary-dark');
     margin-top: units(2);
     margin-bottom: units(2);
   }
@@ -128,16 +127,6 @@ grid column to the max-width of the searchbar, which was calculated to be 33rem.
 
 .break-word {
   word-break: break-word;
-}
-
-.dotgov-status-box {
-  background-color: color('primary-lightest'); 
-  border-color: color('accent-cool-lighter');
-}
-
-.dotgov-status-box--action-need {
-  background-color: color('warning-lighter'); 
-  border-color: color('warning');
 }
 
 footer {
@@ -228,14 +217,6 @@ abbr[title] {
   max-width: 23ch;
 }
 
-.ellipsis--30 {
-  max-width: 30ch;
-}
-
-.ellipsis--50 {
-  max-width: 50ch;
-}
-
 .vertical-align-middle {
   vertical-align: middle;
 }
@@ -270,6 +251,14 @@ abbr[title] {
 
 .break-word {
   word-break: break-word;
+}
+
+.string-wrap {
+  white-space: normal;
+  word-wrap: break-word;
+  overflow: visible; 
+  word-break: break-all;
+  max-width: 100%; 
 }
 
 //Icon size adjustment used by buttons and form errors

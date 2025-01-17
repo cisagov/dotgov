@@ -1,5 +1,5 @@
 {% if domain.expiration_date or domain.created_at %}
-  <p class="margin-y-0">
+  <p>
     {% if domain.expiration_date %}
     <strong class="text-primary-dark">Expires:</strong> 
     {{ domain.expiration_date|date }}

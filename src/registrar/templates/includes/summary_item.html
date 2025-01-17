@@ -9,10 +9,7 @@
     {% else %} 
       <h3
     {% endif %} 
-      class="summary-item__title
-             font-sans-md
-             text-primary-dark text-semibold
-             margin-top-0 margin-bottom-05
+      class="margin-top-0 margin-bottom-05
              padding-right-1"
       >
         {{ title }}
@@ -22,7 +19,7 @@
       </h3>
     {% endif %}
       {% if sub_header_text %}
-        <h4 class="header--body text-primary-dark margin-bottom-0">{{ sub_header_text }}</h4>
+        <h4 class="margin-bottom-0">{{ sub_header_text }}</h4>
       {% endif %}
       {% if permissions %}
         {% include "includes/member_permissions.html" with permissions=value %}
@@ -40,9 +37,7 @@
                 {% for item in value %}
                   <dt>
                   
-                 <h4 class="summary-item__title
-             font-sans-md
-             text-primary-dark text-semibold
+                 <h4 class="
              margin-bottom-05
              padding-right-1">
                       Contact {{forloop.counter}}
@@ -119,7 +114,7 @@
           {% endif %}
         {% endif %}
         {% if value.invitations.all %}
-          <h4 class="h4--sm-05">Invited domain managers</h4>
+          <h4 class="margin-bottom-05">Invited domain managers</h4>
           <ul class="usa-list usa-list--unstyled margin-top-0">
           {% for item in value.invitations.all %}
             <li>{{ item.email }}</li>
@@ -143,7 +138,7 @@
       <div class="text-right">
       <a
           href="{{ edit_link }}"
-          class="usa-link usa-link--icon font-sans-sm line-height-sans-5"
+          class="usa-link usa-link--icon font-sans-sm line-height-sans-4"
       >
         <svg class="usa-icon" aria-hidden="true" focusable="false" role="img" width="24">
           <use xlink:href="{% static 'img/sprite.svg' %}#{% if manage_button %}settings{% elif view_button %}visibility{% else %}edit{% endif %}"></use>

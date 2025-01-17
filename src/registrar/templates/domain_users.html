@@ -51,7 +51,7 @@
   {% if domain_manager_roles %}
   <section class="section-outlined" id="domain-managers">
   <table class="usa-table usa-table--borderless usa-table--stacked dotgov-table--stacked dotgov-table">
-    <h2 class> Domain managers </h2>
+    <h2> Domain managers </h2>
     <caption class="sr-only">Domain managers</caption>
     <thead>
       <tr>
@@ -135,7 +135,7 @@
       ></div>
   {% endif %}
 
-  <a class="usa-button usa-button--unstyled" href="{% url 'domain-users-add' pk=domain.id %}">
+  <a class="usa-button usa-button--unstyled usa-button--with-icon" href="{% url 'domain-users-add' pk=domain.id %}">
     <svg class="usa-icon" aria-hidden="true" focusable="false" role="img" width="24" height="24">
       <use xlink:href="{%static 'img/sprite.svg'%}#add_circle"></use>
     </svg><span class="margin-left-05">Add a domain manager</span>
