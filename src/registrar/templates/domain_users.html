@@ -65,7 +65,7 @@
       <tr>
         <th scope="row" role="rowheader" data-sort-value="{{ item.permission.user.email }}" data-label="Email">
           {{ item.permission.user.email }}
-          {% if item.has_admin_flag %}<span class="usa-tag margin-left-1 bg-primary">Admin</span>{% endif %}
+          {% if item.has_admin_flag %}<span class="usa-tag margin-left-1 primary-dark text-medium">Admin</span>{% endif %}
         </th>
         {% if not portfolio %}<td data-label="Role">{{ item.permission.role|title }}</td>{% endif %}
         <td>
@@ -160,7 +160,7 @@
         <tr>
           <th scope="row" role="rowheader" data-sort-value="{{ invitation.domain_invitation.user.email }}" data-label="Email">
             {{ invitation.domain_invitation.email }}
-            {% if invitation.has_admin_flag %}<span class="usa-tag margin-left-1 bg-primary">Admin</span>{% endif %}
+            {% if invitation.has_admin_flag %}<span class="usa-tag margin-left-1 primary-dark text-medium">Admin</span>{% endif %}
           </th>
           <td data-sort-value="{{ invitation.domain_invitation.created_at|date:"U" }}" data-label="Date created">{{ invitation.domain_invitation.created_at|date }} </td>
           {% if not portfolio %}<td data-label="Status">{{ invitation.domain_invitation.status|title }}</td>{% endif %}

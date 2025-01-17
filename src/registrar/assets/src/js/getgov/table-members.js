@@ -66,7 +66,13 @@ export class MembersTable extends BaseTable {
     };
   }
 
-  addRow(dataObject, tbody, customTableOptions) {
+  loadRows(dataObjects, tbody, customTableOptions) {
+    dataObjects.forEach((dataObject, index) => {
+      this.addRow(index, dataObject, tbody, customTableOptions);
+    });
+  }
+
+  addRow(index, dataObject, tbody, customTableOptions) {
     const member = dataObject;
     // member is based on either a UserPortfolioPermission or a PortfolioInvitation
     // and also includes information from related domains; the 'id' of the org_member
@@ -78,17 +84,21 @@ export class MembersTable extends BaseTable {
     const num_domains = member.domain_urls.length;
     const last_active = this.handleLastActive(member.last_active);
     let cancelInvitationButton = member.type === "invitedmember" ? "Cancel invitation" : "Remove member";
-    const kebabHTML = customTableOptions.hasAdditionalActions ? generateKebabHTML('remove-member', unique_id, cancelInvitationButton, `for ${member.name}`): ''; 
+    const kebabHTML = customTableOptions.hasAdditionalActions ? generateKebabHTML('remove-member', unique_id, cancelInvitationButton, `Expand for more options for ${member.name}`): ''; 
 
     const row = document.createElement('tr');
+    const isLastRow = index === dataObjects.length - 1;
+    if (isLastRow) {
+      row.classList.add("hide-td-borders");
+    }
 
     let admin_tagHTML = ``;
     if (member.is_admin)
-      admin_tagHTML = `<span class="usa-tag margin-left-1 bg-primary">Admin</span>`
+      admin_tagHTML = `<span class="usa-tag margin-left-1 primary-dark text-medium">Admin</span>`
 
     // generate html blocks for domains and permissions for the member
     let domainsHTML = this.generateDomainsHTML(num_domains, member.domain_names, member.domain_urls, member.action_url);
-    let permissionsHTML = this.generatePermissionsHTML(member.permissions, customTableOptions.UserPortfolioPermissionChoices);
+    let permissionsHTML = this.generatePermissionsHTML(member.permissions, customTableOptions.UserPortfolioPermissionChoices, unique_id);
 
     // domainsHTML block and permissionsHTML block need to be wrapped with hide/show toggle, Expand
     let showMoreButton = '';
@@ -99,7 +109,8 @@ export class MembersTable extends BaseTable {
           type="button" 
           class="usa-button--show-more-button usa-button usa-button--unstyled display-block margin-top-1" 
           data-for=${unique_id}
-          aria-label="Expand for additional information"
+          aria-label="Expand for additional information for ${member.member_display}"
+          aria-label-placeholder="${member.member_display}"
         >
           <span>Expand</span>
           <svg class="usa-icon usa-icon--large" aria-hidden="true" focusable="false" role="img" width="24">
@@ -166,12 +177,26 @@ export class MembersTable extends BaseTable {
         spanElement.textContent = 'Close';
         useElement.setAttribute('xlink:href', '/public/img/sprite.svg#expand_less');
         buttonParentRow.classList.add('hide-td-borders');
-        toggleButton.setAttribute('aria-label', 'Close additional information');
+
+        let ariaLabelText = "Close additional information";
+        let ariaLabelPlaceholder = toggleButton.getAttribute("aria-label-placeholder");
+        if (ariaLabelPlaceholder) {
+          ariaLabelText = `Close additional information for ${ariaLabelPlaceholder}`;
+        }
+        toggleButton.setAttribute('aria-label', ariaLabelText);
+
+        // Set tabindex for focusable elements in expanded content
       } else {    
         hideElement(contentDiv);
         spanElement.textContent = 'Expand';
         useElement.setAttribute('xlink:href', '/public/img/sprite.svg#expand_more');
         buttonParentRow.classList.remove('hide-td-borders');
+
+        let ariaLabelText = "Expand for additional information";
+        let ariaLabelPlaceholder = toggleButton.getAttribute("aria-label-placeholder");
+        if (ariaLabelPlaceholder) {
+          ariaLabelText = `Expand for additional information for ${ariaLabelPlaceholder}`;
+        }
         toggleButton.setAttribute('aria-label', 'Expand for additional information');
       }
     }
@@ -245,21 +270,19 @@ export class MembersTable extends BaseTable {
     // Only generate HTML if the member has one or more assigned domains
     if (num_domains > 0) {
       domainsHTML += "<div class='desktop:grid-col-5 margin-bottom-2 desktop:margin-bottom-0'>";
-      domainsHTML += "<h4 class='margin-y-0 text-primary'>Domains assigned</h4>";
-      domainsHTML += `<p class='margin-y-0'>This member is assigned to ${num_domains} domains:</p>`;
+      domainsHTML += "<h4 class='font-body-xs margin-y-0 text-primary'>Domains assigned</h4>";
+      domainsHTML += `<p class='font-body-xs text-base-dark margin-y-0'>This member is assigned to ${num_domains} domain${num_domains > 1 ? 's' : ''}:</p>`;
       domainsHTML += "<ul class='usa-list usa-list--unstyled margin-y-0'>";
 
       // Display up to 6 domains with their URLs
       for (let i = 0; i < num_domains && i < 6; i++) {
-        domainsHTML += `<li><a href="${domain_urls[i]}">${domain_names[i]}</a></li>`;
+        domainsHTML += `<li><a class="font-body-xs" href="${domain_urls[i]}">${domain_names[i]}</a></li>`;
       }
 
       domainsHTML += "</ul>";
 
       // If there are more than 6 domains, display a "View assigned domains" link
-      if (num_domains >= 6) {
-        domainsHTML += `<p><a href="${action_url}/domains">View assigned domains</a></p>`;
-      }
+      domainsHTML += `<p class="font-body-xs"><a href="${action_url}/domains">View assigned domains</a></p>`;
 
       domainsHTML += "</div>";
     }
@@ -375,37 +398,40 @@ export class MembersTable extends BaseTable {
    * - If no relevant permissions are found, the function returns a message stating that the user has no additional permissions.
    * - The resulting HTML always includes a header "Additional permissions for this member" and appends the relevant permission descriptions.
    */
-  generatePermissionsHTML(member_permissions, UserPortfolioPermissionChoices) {
+  generatePermissionsHTML(member_permissions, UserPortfolioPermissionChoices, unique_id) {
     let permissionsHTML = '';
+
+    // Define shared classes across elements for easier refactoring
+    let sharedParagraphClasses = "font-body-xs text-base-dark margin-top-1 p--blockquote";
 
     // Check domain-related permissions
     if (member_permissions.includes(UserPortfolioPermissionChoices.VIEW_ALL_DOMAINS)) {
-      permissionsHTML += "<p class='margin-top-1 p--blockquote'><strong class='text-base-dark'>Domains:</strong> Can view all organization domains. Can manage domains they are assigned to and edit information about the domain (including DNS settings).</p>";
+      permissionsHTML += `<p class='${sharedParagraphClasses}'><strong class='text-base-dark'>Domains:</strong> Can view all organization domains. Can manage domains they are assigned to and edit information about the domain (including DNS settings).</p>`;
     } else if (member_permissions.includes(UserPortfolioPermissionChoices.VIEW_MANAGED_DOMAINS)) {
-      permissionsHTML += "<p class='margin-top-1 p--blockquote'><strong class='text-base-dark'>Domains:</strong> Can manage domains they are assigned to and edit information about the domain (including DNS settings).</p>";
+      permissionsHTML += `<p class='${sharedParagraphClasses}'><strong class='text-base-dark'>Domains:</strong> Can manage domains they are assigned to and edit information about the domain (including DNS settings).</p>`;
     }
 
     // Check request-related permissions
     if (member_permissions.includes(UserPortfolioPermissionChoices.EDIT_REQUESTS)) {
-      permissionsHTML += "<p class='margin-top-1 p--blockquote'><strong class='text-base-dark'>Domain requests:</strong> Can view all organization domain requests. Can create domain requests and modify their own requests.</p>";
+      permissionsHTML += `<p class='${sharedParagraphClasses}'><strong class='text-base-dark'>Domain requests:</strong> Can view all organization domain requests. Can create domain requests and modify their own requests.</p>`;
     } else if (member_permissions.includes(UserPortfolioPermissionChoices.VIEW_ALL_REQUESTS)) {
-      permissionsHTML += "<p class='margin-top-1 p--blockquote'><strong class='text-base-dark'>Domain requests (view-only):</strong> Can view all organization domain requests. Can't create or modify any domain requests.</p>";
+      permissionsHTML += `<p class='${sharedParagraphClasses}'><strong class='text-base-dark'>Domain requests (view-only):</strong> Can view all organization domain requests. Can't create or modify any domain requests.</p>`;
     }
 
     // Check member-related permissions
     if (member_permissions.includes(UserPortfolioPermissionChoices.EDIT_MEMBERS)) {
-      permissionsHTML += "<p class='margin-top-1 p--blockquote'><strong class='text-base-dark'>Members:</strong> Can manage members including inviting new members, removing current members, and assigning domains to members.</p>";
+      permissionsHTML += `<p class='${sharedParagraphClasses}'><strong class='text-base-dark'>Members:</strong> Can manage members including inviting new members, removing current members, and assigning domains to members.</p>`;
     } else if (member_permissions.includes(UserPortfolioPermissionChoices.VIEW_MEMBERS)) {
-      permissionsHTML += "<p class='margin-top-1 p--blockquote'><strong class='text-base-dark'>Members (view-only):</strong> Can view all organizational members. Can't manage any members.</p>";
+      permissionsHTML += `<p class='${sharedParagraphClasses}'><strong class='text-base-dark'>Members (view-only):</strong> Can view all organizational members. Can't manage any members.</p>`;
     }
 
     // If no specific permissions are assigned, display a message indicating no additional permissions
     if (!permissionsHTML) {
-      permissionsHTML += "<p class='margin-top-1 p--blockquote'><b>No additional permissions:</b> There are no additional permissions for this member.</p>";
+      permissionsHTML += `<p class='${sharedParagraphClasses}'><b>No additional permissions:</b> There are no additional permissions for this member.</p>`;
     }
 
     // Add a permissions header and wrap the entire output in a container
-    permissionsHTML = "<div class='desktop:grid-col-7'><h4 class='margin-y-0 text-primary'>Additional permissions for this member</h4>" + permissionsHTML + "</div>";
+    permissionsHTML = `<div class='desktop:grid-col-7'><h4 class='font-body-xs margin-y-0 text-primary'>Additional permissions for this member</h4>${permissionsHTML}</div>`;
     
     return permissionsHTML;
   }
@@ -423,7 +449,7 @@ export class MembersTable extends BaseTable {
     let modalDescription = ``;
 
     if (num_domains >= 0){
-      modalHeading = `Are you sure you want to delete ${member_email}?`;
+      modalHeading = `Are you sure you want to remove ${member_email} from the organization?`;
       modalDescription = `They will no longer be able to access this organization. 
       This action cannot be undone.`;
       if (num_domains >= 1)

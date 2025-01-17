@@ -93,7 +93,6 @@ export function generateKebabHTML(action, unique_id, modal_button_text, screen_r
         <use xlink:href="/public/img/sprite.svg#delete"></use>
       </svg>` : ''}
       ${modal_button_text}
-      <span class="usa-sr-only">${screen_reader_text}</span>
     </a>
   `;
 
@@ -107,6 +106,7 @@ export function generateKebabHTML(action, unique_id, modal_button_text, screen_r
           class="usa-button usa-button--unstyled usa-button--with-icon usa-accordion__button usa-button--more-actions"
           aria-expanded="false"
           aria-controls="more-actions-${unique_id}"
+          aria-label="${screen_reader_text}"
         >
           <svg class="usa-icon top-2px" aria-hidden="true" focusable="false" role="img" width="24">
             <use xlink:href="/public/img/sprite.svg#more_vert"></use>
@@ -469,10 +469,7 @@ export class BaseTable {
 
         let dataObjects = this.getDataObjects(data);
         let customTableOptions = this.customizeTable(data);
-
-        dataObjects.forEach(dataObject => {
-          this.addRow(dataObject, tbody, customTableOptions);
-        });
+        this.loadRows(dataObjects, tbody, customTableOptions)
 
         this.initShowMoreButtons();
         this.initCheckboxListeners();
@@ -498,6 +495,12 @@ export class BaseTable {
         this.currentSearchTerm = searchTerm;
     })
     .catch(error => console.error('Error fetching objects:', error));
+  }
+
+  loadRows(dataObjects, tbody, customTableOptions) {
+    dataObjects.forEach(dataObject => {
+      this.addRow(dataObject, tbody, customTableOptions);
+    });
   }
 
   // Add event listeners to table headers for sorting

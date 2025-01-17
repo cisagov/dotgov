@@ -19,9 +19,9 @@ export class MemberDomainsTable extends BaseTable {
     const domain = dataObject;
     const row = document.createElement('tr');
     row.innerHTML = `
-      <td scope="row" data-label="Domain name">
+      <th scope="row" role="rowheader" data-label="Domain name">
         ${domain.name}
-      </td>
+      </th>
     `;
     tbody.appendChild(row);
   }

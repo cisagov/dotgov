@@ -253,6 +253,10 @@ a.text-secondary:hover {
   color: $theme-color-error;
 }
 
+button.usa-button.usa-button--secondary, a.usa-button.usa-button--secondary {
+  background-color: $theme-color-error;
+}
+
 .usa-button--show-more-button {
   font-size: size('ui', 'xs');
   text-decoration: none;

@@ -1677,7 +1677,8 @@ class TestPortfolio(WebTest):
             support_url = "https://get.gov/contact/"
             expected_error_message = (
                 f"This member has an active domain request and can't be removed from the organization. "
-                f"<a href='{support_url}' target='_blank'>Contact the .gov team</a> to remove them."
+                f"<a class='usa-link' href='{support_url}' target='_blank'>"
+                "Contact the .gov team</a> to remove them."
             )
 
             self.assertContains(response, expected_error_message, status_code=400)
@@ -1800,7 +1801,8 @@ class TestPortfolio(WebTest):
                 support_url = "https://get.gov/contact/"
                 expected_error_message = (
                     f"This member has an active domain request and can't be removed from the organization. "
-                    f"<a href='{support_url}' target='_blank'>Contact the .gov team</a> to remove them."
+                    f"<a class='usa-link' href='{support_url}' target='_blank'>"
+                    "Contact the .gov team</a> to remove them."
                 )
 
                 args, kwargs = mock_error.call_args

@@ -30,7 +30,7 @@
                 <td>{{ member.user.phone }}</td>
                 <td>
                     {% for role in member.user|portfolio_role_summary:original %}
-                        <span class="usa-tag">{{ role }}</span>
+                        <span class="usa-tag primary-dark text-medium">{{ role }}</span>
                     {% endfor %}
                 </td>
                 <td class="padding-left-1 text-size-small">

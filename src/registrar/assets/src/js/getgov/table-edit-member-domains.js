@@ -104,7 +104,7 @@ export class EditMemberDomainsTable extends BaseTable {
     }
     
     row.innerHTML = `
-        <td data-label="Selection" data-sort-value="0" class="padding-right-105">
+        <th scope="row" role="rowheader" aria-label="Checkbox for ${domain.name}" data-label="Selection" data-sort-value="0" class="padding-right-105">
             <div class="usa-checkbox">
                 <input
                     class="usa-checkbox__input"
@@ -119,7 +119,7 @@ export class EditMemberDomainsTable extends BaseTable {
                     <span class="sr-only">${domain.id}</span>
                 </label>
             </div>
-        </td>
+        </th>
         <td data-label="Domain name">
             ${domain.name}
             ${disabled ? '<span class="display-block margin-top-05 text-gray-50">Domains must have one domain manager. To unassign this member, the domain needs another domain manager.</span>' : ''}
