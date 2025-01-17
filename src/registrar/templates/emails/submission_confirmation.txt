@@ -4,6 +4,7 @@ Hi, {{ recipient.first_name }}.
 We received your .gov domain request.
 
 DOMAIN REQUESTED: {{ domain_request.requested_domain.name }}
+REQUESTED BY: {{ domain_request.creator.first_name }} {{ domain_request.creator.last_name }}
 REQUEST RECEIVED ON: {{ domain_request.last_submitted_date|date }}
 STATUS: Submitted
 
@@ -11,12 +12,14 @@ STATUS: Submitted
 
 NEXT STEPS
 We’ll review your request. This review period can take 30 business days. Due to the volume of requests, the wait time is longer than usual. We appreciate your patience.  
-
+{% if is_org_user %}
+During our review we’ll verify that your requested domain meets our naming requirements.
+{% else %}
 During our review, we’ll verify that:
 - Your organization is eligible for a .gov domain
 - You work at the organization and/or can make requests on its behalf 
 - Your requested domain meets our naming requirements 
-
+{% endif %}
 We’ll email you if we have questions. We’ll also email you as soon as we complete our review. You can check the status of your request at any time on the registrar. <https://manage.get.gov>
 
 

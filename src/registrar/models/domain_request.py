@@ -9,6 +9,7 @@ from django.utils import timezone
 from registrar.models.domain import Domain
 from registrar.models.federal_agency import FederalAgency
 from registrar.models.utility.generic_helper import CreateOrUpdateOrganizationTypeHelper
+from registrar.models.utility.portfolio_helper import UserPortfolioPermissionChoices
 from registrar.utility.errors import FSMDomainRequestError, FSMErrorCodes
 from registrar.utility.constants import BranchChoices
 from auditlog.models import LogEntry
@@ -903,6 +904,7 @@ class DomainRequest(TimeStampedModel):
         email_template,
         email_template_subject,
         bcc_address="",
+        cc_addresses: list[str] = [],
         context=None,
         send_email=True,
         wrap_email=False,
@@ -961,6 +963,7 @@ class DomainRequest(TimeStampedModel):
                 recipient.email,
                 context=context,
                 bcc_address=bcc_address,
+                cc_addresses=cc_addresses,
                 wrap_email=wrap_email,
             )
             logger.info(f"The {new_status} email sent to: {recipient.email}")
@@ -1015,6 +1018,14 @@ class DomainRequest(TimeStampedModel):
         if settings.IS_PRODUCTION:
             bcc_address = settings.DEFAULT_FROM_EMAIL
 
+        cc_addresses: list[str] = []
+        if self.requesting_entity_is_portfolio():
+            portfolio_view_requests_users = self.portfolio.portfolio_users_with_permissions(
+                permissions=[UserPortfolioPermissionChoices.VIEW_ALL_REQUESTS]
+            )
+            cc_users = self.portfolio.portfolio_admin_users | portfolio_view_requests_users
+            cc_addresses = list(cc_users.values_list("email", flat=True))
+
         if self.status in limited_statuses:
             self._send_status_update_email(
                 "submission confirmation",
@@ -1022,6 +1033,7 @@ class DomainRequest(TimeStampedModel):
                 "emails/submission_confirmation_subject.txt",
                 send_email=True,
                 bcc_address=bcc_address,
+                cc_addresses=cc_addresses,
             )
 
     @transition(

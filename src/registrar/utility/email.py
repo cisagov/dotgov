@@ -36,7 +36,7 @@ def send_templated_email(  # noqa
 
     to_address and bcc_address currently only support single addresses.
 
-    cc_address is a list and can contain many addresses. Emails not in the
+    cc_addresses is a list and can contain many addresses. Emails not in the
     whitelist (if applicable) will be filtered out before sending.
 
     template_name and subject_template_name are relative to the same template

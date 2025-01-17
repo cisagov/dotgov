@@ -144,6 +144,15 @@ class Portfolio(TimeStampedModel):
         ).values_list("user__id", flat=True)
         return User.objects.filter(id__in=admin_ids)
 
+    def portfolio_users_with_permissions(self, permissions=[]):
+        """Gets all users with specified additional permissions for this particular portfolio.
+        Returns a queryset of User."""
+        portfolio_users = self.portfolio_users
+        if permissions:
+            portfolio_users = portfolio_users.filter(additional_permissions__overlap=permissions)
+        user_ids = portfolio_users.values_list("user__id", flat=True)
+        return User.objects.filter(id__in=user_ids)
+
     # == Getters for domains == #
     def get_domains(self, order_by=None):
         """Returns all DomainInformations associated with this portfolio"""
