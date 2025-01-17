@@ -349,6 +349,70 @@ class TestDomainCache(MockEppLib):
 class TestDomainCreation(MockEppLib):
     """Rule: An approved domain request must result in a domain"""
 
+    @less_console_noise_decorator
+    def test_get_or_create_public_contact_race_condition(self):
+        """
+        Scenario: Two processes try to create the same security contact simultaneously
+            Given a domain in UNKNOWN state
+            When a race condition occurs during contact creation
+            Then no IntegrityError is raised
+            And only one security contact exists in database
+            And the correct public contact is returned
+
+        CONTEXT: We ran into an intermittent but somewhat rare issue where IntegrityError
+        was raised when creating PublicContact.
+        Per our logs, this seemed to appear during periods of high app activity.
+        """
+        domain, _ = Domain.objects.get_or_create(name="defaultsecurity.gov")
+
+        self.first_call = True
+
+        def mock_filter(*args, **kwargs):
+            """Simulates a race condition by creating a
+            duplicate contact between the first filter and save.
+            """
+            # Return an empty queryset for the first call. Otherwise just proceed as normal.
+            if self.first_call:
+                self.first_call = False
+                duplicate = PublicContact(
+                    domain=domain,
+                    contact_type=PublicContact.ContactTypeChoices.SECURITY,
+                    registry_id="defaultSec",
+                    email="dotgov@cisa.dhs.gov",
+                    name="Registry Customer Service",
+                )
+                duplicate.save(skip_epp_save=True)
+                return PublicContact.objects.none()
+
+            return PublicContact.objects.filter(*args, **kwargs)
+
+        with patch.object(PublicContact.objects, "filter", side_effect=mock_filter):
+            try:
+                public_contact = PublicContact(
+                    domain=domain,
+                    contact_type=PublicContact.ContactTypeChoices.SECURITY,
+                    registry_id="defaultSec",
+                    email="dotgov@cisa.dhs.gov",
+                    name="Registry Customer Service",
+                )
+                returned_public_contact = domain._get_or_create_public_contact(public_contact)
+            except IntegrityError:
+                self.fail(
+                    "IntegrityError was raised during contact creation due to a race condition. "
+                    "This indicates that concurrent contact creation is not working in some cases. "
+                    "The error occurs when two processes try to create the same contact simultaneously. "
+                    "Expected behavior: gracefully handle duplicate creation and return existing contact."
+                )
+
+        # Verify that only one contact exists and its correctness
+        security_contacts = PublicContact.objects.filter(
+            domain=domain, contact_type=PublicContact.ContactTypeChoices.SECURITY
+        )
+        self.assertEqual(security_contacts.count(), 1)
+        self.assertEqual(returned_public_contact, security_contacts.get())
+        self.assertEqual(returned_public_contact.registry_id, "defaultSec")
+        self.assertEqual(returned_public_contact.email, "dotgov@cisa.dhs.gov")
+
     @boto3_mocking.patching
     def test_approved_domain_request_creates_domain_locally(self):
         """
