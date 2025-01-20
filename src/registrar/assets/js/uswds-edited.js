@@ -29,6 +29,7 @@
  *  - tooltip dynamic content updated to include nested element (for better sizing control)
  *  - modal exposed to window to be accessible in other js files
  *  - fixed bug in createHeaderButton which added newlines to header button tooltips
+ *  - modified combobox to handle error class
  */
 
 if ("document" in window.self) {
@@ -1213,6 +1214,11 @@ const enhanceComboBox = _comboBoxEl => {
   input.setAttribute("class", INPUT_CLASS);
   input.setAttribute("type", "text");
   input.setAttribute("role", "combobox");
+  // DOTGOV - handle error class for combobox
+  // Check if 'usa-input--error' exists in selectEl and add it to input if true
+  if (selectEl.classList.contains('usa-input--error')) {
+    input.classList.add('usa-input--error');
+  }
   additionalAttributes.forEach(attr => Object.keys(attr).forEach(key => {
     const value = Sanitizer.escapeHTML`${attr[key]}`;
     input.setAttribute(key, value);

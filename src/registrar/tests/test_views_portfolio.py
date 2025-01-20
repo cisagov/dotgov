@@ -2879,7 +2879,7 @@ class TestRequestingEntity(WebTest):
 
         form["portfolio_requesting_entity-requesting_entity_is_suborganization"] = True
         form["portfolio_requesting_entity-is_requesting_new_suborganization"] = True
-        form["portfolio_requesting_entity-sub_organization"] = ""
+        form["portfolio_requesting_entity-sub_organization"] = "other"
 
         form["portfolio_requesting_entity-requested_suborganization"] = "moon"
         form["portfolio_requesting_entity-suborganization_city"] = "kepler"
@@ -2942,18 +2942,34 @@ class TestRequestingEntity(WebTest):
         session_id = self.app.cookies[settings.SESSION_COOKIE_NAME]
         self.app.set_cookie(settings.SESSION_COOKIE_NAME, session_id)
 
+        # For 2 the tests below, it is required to submit a form without submitting a value
+        # for the select/combobox. WebTest will not do this; by default, WebTest will submit
+        # the first choice in a select. So, need to manipulate the form to remove the
+        # particular select/combobox that will not be submitted, and then post the form.
+        form_action = f"/request/{domain_request.pk}/portfolio_requesting_entity/"
+
         # Test missing suborganization selection
         form["portfolio_requesting_entity-requesting_entity_is_suborganization"] = True
-        form["portfolio_requesting_entity-sub_organization"] = ""
-
-        response = form.submit()
+        form["portfolio_requesting_entity-is_requesting_new_suborganization"] = False
+        # remove sub_organization from the form submission
+        form_data = form.submit_fields()
+        form_data = [(key, value) for key, value in form_data if key != "portfolio_requesting_entity-sub_organization"]
+        response = self.app.post(form_action, dict(form_data))
         self.app.set_cookie(settings.SESSION_COOKIE_NAME, session_id)
         self.assertContains(response, "Suborganization is required.", status_code=200)
 
         # Test missing custom suborganization details
+        form["portfolio_requesting_entity-requesting_entity_is_suborganization"] = True
         form["portfolio_requesting_entity-is_requesting_new_suborganization"] = True
-        response = form.submit()
-        self.app.set_cookie(settings.SESSION_COOKIE_NAME, session_id)
+        form["portfolio_requesting_entity-sub_organization"] = "other"
+        # remove suborganization_state_territory from the form submission
+        form_data = form.submit_fields()
+        form_data = [
+            (key, value)
+            for key, value in form_data
+            if key != "portfolio_requesting_entity-suborganization_state_territory"
+        ]
+        response = self.app.post(form_action, dict(form_data))
         self.assertContains(response, "Enter the name of your suborganization.", status_code=200)
         self.assertContains(response, "Enter the city where your suborganization is located.", status_code=200)
         self.assertContains(

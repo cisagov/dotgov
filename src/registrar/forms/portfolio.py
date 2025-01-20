@@ -6,6 +6,7 @@ from django.core.validators import RegexValidator
 from django.core.validators import MaxLengthValidator
 from django.utils.safestring import mark_safe
 
+from registrar.forms.utility.combobox import ComboboxWidget
 from registrar.models import (
     PortfolioInvitation,
     UserPortfolioPermission,
@@ -33,6 +34,15 @@ class PortfolioOrgAddressForm(forms.ModelForm):
             "required": "Enter a 5-digit or 9-digit zip code, like 12345 or 12345-6789.",
         },
     )
+    state_territory = forms.ChoiceField(
+        label="State, territory, or military post",
+        required=True,
+        choices=DomainInformation.StateTerritoryChoices.choices,
+        error_messages={
+            "required": ("Select the state, territory, or military post where your organization is located.")
+        },
+        widget=ComboboxWidget,
+    )
 
     class Meta:
         model = Portfolio
@@ -47,25 +57,12 @@ class PortfolioOrgAddressForm(forms.ModelForm):
         error_messages = {
             "address_line1": {"required": "Enter the street address of your organization."},
             "city": {"required": "Enter the city where your organization is located."},
-            "state_territory": {
-                "required": "Select the state, territory, or military post where your organization is located."
-            },
             "zipcode": {"required": "Enter a 5-digit or 9-digit zip code, like 12345 or 12345-6789."},
         }
         widgets = {
-            # We need to set the required attributed for State/territory
-            # because for this fields we are creating an individual
-            # instance of the Select. For the other fields we use the for loop to set
-            # the class's required attribute to true.
             "address_line1": forms.TextInput,
             "address_line2": forms.TextInput,
             "city": forms.TextInput,
-            "state_territory": forms.Select(
-                attrs={
-                    "required": True,
-                },
-                choices=DomainInformation.StateTerritoryChoices.choices,
-            ),
             # "urbanization": forms.TextInput,
         }
 

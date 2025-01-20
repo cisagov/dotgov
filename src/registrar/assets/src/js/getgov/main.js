@@ -3,7 +3,6 @@ import { initDomainValidators } from './domain-validators.js';
 import { initFormsetsForms, triggerModalOnDsDataForm, nameserversFormListener } from './formset-forms.js';
 import { initializeUrbanizationToggle } from './urbanization.js';
 import { userProfileListener, finishUserSetupListener } from './user-profile.js';
-import { loadInitialValuesForComboBoxes } from './combobox.js';
 import { handleRequestingEntityFieldset } from './requesting-entity.js';
 import { initDomainsTable } from './table-domains.js';
 import { initDomainRequestsTable } from './table-domain-requests.js';
@@ -30,8 +29,6 @@ initializeUrbanizationToggle();
 
 userProfileListener();
 finishUserSetupListener();
-
-loadInitialValuesForComboBoxes();
 
 handleRequestingEntityFieldset();
 

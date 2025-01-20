@@ -11,6 +11,7 @@ for now we just carry the attribute to both the parent element and the select.
         {{ name }}="{{ value }}"
     {% endif %}
 {% endfor %}
+data-default-value="{% for group_name, group_choices, group_index in widget.optgroups %}{% for option in group_choices %}{% if option.selected %}{{ option.value }}{% endif %}{% endfor %}{% endfor %}"
 >
-    {% include "django/forms/widgets/select.html" %}
+    {% include "django/forms/widgets/select.html" with is_combobox=True %}
 </div>

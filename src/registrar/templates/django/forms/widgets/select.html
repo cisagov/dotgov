@@ -3,6 +3,9 @@
     {# hint: spacing in the class string matters #}
     class="usa-select{% if classes %} {{ classes }}{% endif %}"
     {% include "django/forms/widgets/attrs.html" %}
+    {% if is_combobox %}
+      data-default-value="{% for group_name, group_choices, group_index in widget.optgroups %}{% for option in group_choices %}{% if option.selected %}{{ option.value }}{% endif %}{% endfor %}{% endfor %}"
+    {% endif %}
 >
   {% for group, options, index in widget.optgroups %}
     {% if group %}<optgroup label="{{ group }}">{% endif %}

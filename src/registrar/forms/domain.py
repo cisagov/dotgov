@@ -4,6 +4,7 @@ import logging
 from django import forms
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator, MaxLengthValidator
 from django.forms import formset_factory
+from registrar.forms.utility.combobox import ComboboxWidget
 from registrar.models import DomainRequest, FederalAgency
 from phonenumber_field.widgets import RegionalPhoneNumberWidget
 from registrar.models.suborganization import Suborganization
@@ -161,9 +162,10 @@ class DomainSuborganizationForm(forms.ModelForm):
     """Form for updating the suborganization"""
 
     sub_organization = forms.ModelChoiceField(
+        label="Suborganization name",
         queryset=Suborganization.objects.none(),
         required=False,
-        widget=forms.Select(),
+        widget=ComboboxWidget,
     )
 
     class Meta:
@@ -177,20 +179,6 @@ class DomainSuborganizationForm(forms.ModelForm):
 
         portfolio = self.instance.portfolio if self.instance else None
         self.fields["sub_organization"].queryset = Suborganization.objects.filter(portfolio=portfolio)
-
-        # Set initial value
-        if self.instance and self.instance.sub_organization:
-            self.fields["sub_organization"].initial = self.instance.sub_organization
-
-        # Set custom form label
-        self.fields["sub_organization"].label = "Suborganization name"
-
-        # Use the combobox rather than the regular select widget
-        self.fields["sub_organization"].widget.template_name = "django/forms/widgets/combobox.html"
-
-        # Set data-default-value attribute
-        if self.instance and self.instance.sub_organization:
-            self.fields["sub_organization"].widget.attrs["data-default-value"] = self.instance.sub_organization.pk
 
 
 class BaseNameserverFormset(forms.BaseFormSet):
@@ -456,6 +444,13 @@ class DomainSecurityEmailForm(forms.Form):
 class DomainOrgNameAddressForm(forms.ModelForm):
     """Form for updating the organization name and mailing address."""
 
+    # for federal agencies we also want to know the top-level agency.
+    federal_agency = forms.ModelChoiceField(
+        label="Federal agency",
+        required=False,
+        queryset=FederalAgency.objects.all(),
+        widget=ComboboxWidget,
+    )
     zipcode = forms.CharField(
         label="Zip code",
         validators=[
@@ -467,6 +462,16 @@ class DomainOrgNameAddressForm(forms.ModelForm):
         error_messages={
             "required": "Enter a 5-digit or 9-digit zip code, like 12345 or 12345-6789.",
         },
+    )
+
+    state_territory = forms.ChoiceField(
+        label="State, territory, or military post",
+        required=True,
+        choices=DomainInformation.StateTerritoryChoices.choices,
+        error_messages={
+            "required": ("Select the state, territory, or military post where your organization is located.")
+        },
+        widget=ComboboxWidget(),
     )
 
     class Meta:
@@ -486,25 +491,12 @@ class DomainOrgNameAddressForm(forms.ModelForm):
             "organization_name": {"required": "Enter the name of your organization."},
             "address_line1": {"required": "Enter the street address of your organization."},
             "city": {"required": "Enter the city where your organization is located."},
-            "state_territory": {
-                "required": "Select the state, territory, or military post where your organization is located."
-            },
         }
         widgets = {
-            # We need to set the required attributed for State/territory
-            # because for this fields we are creating an individual
-            # instance of the Select. For the other fields we use the for loop to set
-            # the class's required attribute to true.
             "organization_name": forms.TextInput,
             "address_line1": forms.TextInput,
             "address_line2": forms.TextInput,
             "city": forms.TextInput,
-            "state_territory": forms.Select(
-                attrs={
-                    "required": True,
-                },
-                choices=DomainInformation.StateTerritoryChoices.choices,
-            ),
             "urbanization": forms.TextInput,
         }
 
