@@ -137,7 +137,9 @@ class PortfolioMembersJson(PortfolioMembersPermission, View):
         )
 
         # PortfolioInvitation query
-        invitations = PortfolioInvitation.objects.filter(portfolio=portfolio)
+        invitations = PortfolioInvitation.objects.filter(
+            portfolio=portfolio, status=PortfolioInvitation.PortfolioInvitationStatus.INVITED
+        )
         invitations = invitations.annotate(
             first_name=Value(None, output_field=CharField()),
             last_name=Value(None, output_field=CharField()),

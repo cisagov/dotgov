@@ -54,6 +54,7 @@ class GetPortfolioMembersJsonTest(MockEppLib, WebTest):
             title="Admin",
         )
         self.email6 = "fifth@example.com"
+        self.email7 = "sixth@example.com"
 
         # Create Portfolio
         self.portfolio = Portfolio.objects.create(creator=self.user, organization_name="Test Portfolio")
@@ -302,7 +303,7 @@ class GetPortfolioMembersJsonTest(MockEppLib, WebTest):
     @override_flag("organization_members", active=True)
     def test_get_portfolio_invited_json_with_domains(self):
         """Test that portfolio invited members are returned properly for an authenticated user and the response includes
-        the domains that the member manages.."""
+        the domains that the member manages. Test also verifies that retrieved invitations are not included."""
         UserPortfolioPermission.objects.create(
             user=self.user,
             portfolio=self.portfolio,
@@ -318,6 +319,16 @@ class GetPortfolioMembersJsonTest(MockEppLib, WebTest):
                 UserPortfolioPermissionChoices.VIEW_MEMBERS,
                 UserPortfolioPermissionChoices.EDIT_MEMBERS,
             ],
+        )
+        PortfolioInvitation.objects.create(
+            email=self.email7,
+            portfolio=self.portfolio,
+            roles=[UserPortfolioRoleChoices.ORGANIZATION_ADMIN],
+            additional_permissions=[
+                UserPortfolioPermissionChoices.VIEW_MEMBERS,
+                UserPortfolioPermissionChoices.EDIT_MEMBERS,
+            ],
+            status=PortfolioInvitation.PortfolioInvitationStatus.RETRIEVED,
         )
 
         # create a domain in the portfolio

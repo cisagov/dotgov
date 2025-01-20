@@ -1,6 +1,7 @@
 from django.conf import settings
 from registrar.models import DomainInvitation
 from registrar.models.domain import Domain
+from registrar.models.user_domain_role import UserDomainRole
 from registrar.utility.errors import (
     AlreadyDomainInvitedError,
     AlreadyDomainManagerError,
@@ -37,7 +38,7 @@ def send_domain_invitation_email(
     domains = normalize_domains(domains)
     requestor_email = get_requestor_email(requestor, domains)
 
-    validate_invitation(email, domains, requestor, is_member_of_different_org)
+    _validate_invitation(email, requested_user, domains, requestor, is_member_of_different_org)
 
     send_invitation_email(email, requestor_email, domains, requested_user)
 
@@ -62,12 +63,12 @@ def get_requestor_email(requestor, domains):
     return requestor.email
 
 
-def validate_invitation(email, domains, requestor, is_member_of_different_org):
+def _validate_invitation(email, user, domains, requestor, is_member_of_different_org):
     """Validate the invitation conditions."""
     check_outside_org_membership(email, requestor, is_member_of_different_org)
 
     for domain in domains:
-        validate_existing_invitation(email, domain)
+        _validate_existing_invitation(email, user, domain)
 
 
 def check_outside_org_membership(email, requestor, is_member_of_different_org):
@@ -80,7 +81,7 @@ def check_outside_org_membership(email, requestor, is_member_of_different_org):
         raise OutsideOrgMemberError(email=email)
 
 
-def validate_existing_invitation(email, domain):
+def _validate_existing_invitation(email, user, domain):
     """Check for existing invitations and handle their status."""
     try:
         invite = DomainInvitation.objects.get(email=email, domain=domain)
@@ -91,6 +92,9 @@ def validate_existing_invitation(email, domain):
             invite.save()
         else:
             raise AlreadyDomainInvitedError(email)
+        if user:
+            if UserDomainRole.objects.exists(user=user, domain=domain):
+                raise AlreadyDomainManagerError(email)
     except DomainInvitation.DoesNotExist:
         pass
 
