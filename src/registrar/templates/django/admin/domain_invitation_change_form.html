@@ -1,0 +1,14 @@
+{% extends 'django/admin/email_clipboard_change_form.html' %}
+{% load custom_filters %}
+{% load i18n static %}
+
+{% block content_subtitle %}
+    <div class="usa-alert usa-alert--info usa-alert--slim">
+        <div class="usa-alert__body margin-left-1 maxw-none">
+            <p class="usa-alert__text maxw-none">
+                If you add someone to a domain here, it will trigger emails to the invitee and all managers of the domain when you click "save." If you don't want to trigger those emails, use the <a class="usa-link" href="{% url 'admin:registrar_userdomainrole_changelist' %}">User domain roles permissions table</a> instead.
+            </p>
+        </div>
+    </div>
+    {{ block.super }}
+{% endblock %}

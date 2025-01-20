@@ -9,7 +9,7 @@ from registrar.utility.email import EmailSendingError
 from waffle.testutils import override_flag
 from api.tests.common import less_console_noise_decorator
 from registrar.models.utility.portfolio_helper import UserPortfolioPermissionChoices, UserPortfolioRoleChoices
-from .common import MockEppLib, MockSESClient, create_user  # type: ignore
+from .common import MockEppLib, create_user  # type: ignore
 from django_webtest import WebTest  # type: ignore
 import boto3_mocking  # type: ignore
 
@@ -750,11 +750,12 @@ class TestDomainManagers(TestDomainOverview):
         response = self.client.get(reverse("domain-users-add", kwargs={"pk": self.domain.id}))
         self.assertContains(response, "Add a domain manager")
 
-    @boto3_mocking.patching
     @less_console_noise_decorator
-    def test_domain_user_add_form(self):
+    @patch("registrar.views.domain.send_domain_invitation_email")
+    def test_domain_user_add_form(self, mock_send_domain_email):
         """Adding an existing user works."""
         get_user_model().objects.get_or_create(email="mayor@igorville.gov")
+        user = User.objects.filter(email="mayor@igorville.gov").first()
         add_page = self.app.get(reverse("domain-users-add", kwargs={"pk": self.domain.id}))
         session_id = self.app.cookies[settings.SESSION_COOKIE_NAME]
 
@@ -762,10 +763,15 @@ class TestDomainManagers(TestDomainOverview):
 
         self.app.set_cookie(settings.SESSION_COOKIE_NAME, session_id)
 
-        mock_client = MockSESClient()
-        with boto3_mocking.clients.handler_for("sesv2", mock_client):
-            with less_console_noise():
-                success_result = add_page.form.submit()
+        success_result = add_page.form.submit()
+
+        mock_send_domain_email.assert_called_once_with(
+            email="mayor@igorville.gov",
+            requestor=self.user,
+            domains=self.domain,
+            is_member_of_different_org=None,
+            requested_user=user,
+        )
 
         self.assertEqual(success_result.status_code, 302)
         self.assertEqual(
@@ -974,13 +980,13 @@ class TestDomainManagers(TestDomainOverview):
         success_page = success_result.follow()
         self.assertContains(success_page, "Failed to send email.")
 
-    @boto3_mocking.patching
     @less_console_noise_decorator
-    def test_domain_invitation_created(self):
+    @patch("registrar.views.domain.send_domain_invitation_email")
+    def test_domain_invitation_created(self, mock_send_domain_email):
         """Add user on a nonexistent email creates an invitation.
 
         Adding a non-existent user sends an email as a side-effect, so mock
-        out the boto3 SES email sending here.
+        out send_domain_invitation_email here.
         """
         # make sure there is no user with this email
         email_address = "mayor@igorville.gov"
@@ -993,10 +999,11 @@ class TestDomainManagers(TestDomainOverview):
         add_page.form["email"] = email_address
         self.app.set_cookie(settings.SESSION_COOKIE_NAME, session_id)
 
-        mock_client = MockSESClient()
-        with boto3_mocking.clients.handler_for("sesv2", mock_client):
-            with less_console_noise():
-                success_result = add_page.form.submit()
+        success_result = add_page.form.submit()
+
+        mock_send_domain_email.assert_called_once_with(
+            email="mayor@igorville.gov", requestor=self.user, domains=self.domain, is_member_of_different_org=None
+        )
 
         self.app.set_cookie(settings.SESSION_COOKIE_NAME, session_id)
         success_page = success_result.follow()
@@ -1005,13 +1012,13 @@ class TestDomainManagers(TestDomainOverview):
         self.assertContains(success_page, "Cancel")  # link to cancel invitation
         self.assertTrue(DomainInvitation.objects.filter(email=email_address).exists())
 
-    @boto3_mocking.patching
     @less_console_noise_decorator
-    def test_domain_invitation_created_for_caps_email(self):
+    @patch("registrar.views.domain.send_domain_invitation_email")
+    def test_domain_invitation_created_for_caps_email(self, mock_send_domain_email):
         """Add user on a nonexistent email with CAPS creates an invitation to lowercase email.
 
         Adding a non-existent user sends an email as a side-effect, so mock
-        out the boto3 SES email sending here.
+        out send_domain_invitation_email here.
         """
         # make sure there is no user with this email
         email_address = "mayor@igorville.gov"
@@ -1025,9 +1032,11 @@ class TestDomainManagers(TestDomainOverview):
         add_page.form["email"] = caps_email_address
         self.app.set_cookie(settings.SESSION_COOKIE_NAME, session_id)
 
-        mock_client = MockSESClient()
-        with boto3_mocking.clients.handler_for("sesv2", mock_client):
-            success_result = add_page.form.submit()
+        success_result = add_page.form.submit()
+
+        mock_send_domain_email.assert_called_once_with(
+            email="mayor@igorville.gov", requestor=self.user, domains=self.domain, is_member_of_different_org=None
+        )
 
         self.app.set_cookie(settings.SESSION_COOKIE_NAME, session_id)
         success_page = success_result.follow()

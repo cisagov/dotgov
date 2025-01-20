@@ -1367,6 +1367,8 @@ class UserDomainRoleAdmin(ListHeaderAdmin, ImportExportModelAdmin):
 
     autocomplete_fields = ["user", "domain"]
 
+    change_form_template = "django/admin/user_domain_role_change_form.html"
+
     # Fixes a bug where non-superusers are redirected to the main page
     def delete_view(self, request, object_id, extra_context=None):
         """Custom delete_view implementation that specifies redirect behaviour"""
@@ -1500,7 +1502,7 @@ class DomainInvitationAdmin(BaseInvitationAdmin):
 
     autocomplete_fields = ["domain"]
 
-    change_form_template = "django/admin/email_clipboard_change_form.html"
+    change_form_template = "django/admin/domain_invitation_change_form.html"
 
     # Select domain invitations to change -> Domain invitations
     def changelist_view(self, request, extra_context=None):
